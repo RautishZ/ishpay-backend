@@ -26,6 +26,8 @@ public class LoginPojo {
 
     private Set<BeneficiaryEntity> beneficiaries;
 
+    private String statusMassage;
+
     // Constructor with validation
     public LoginPojo(String token, String email, String password, String phoneNumber, boolean isEmailVerified,
             KycDocumentEntity kycDocuments, Set<BeneficiaryEntity> beneficiaries) {

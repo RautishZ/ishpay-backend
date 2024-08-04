@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
+
 import org.springframework.stereotype.Service;
 
 import com.ishpay.ishpay.entities.UserEntity;
@@ -31,7 +32,7 @@ public class JwtServices {
 
     public boolean isValid(String token, UserEntity user) {
         final String username = extractUsername(token);
-        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+        return (username.equals(user.getUsername()) && !isTokenExpired(token) && user.isEnabled());
     }
 
     private boolean isTokenExpired(String token) {
@@ -68,6 +69,7 @@ public class JwtServices {
             token = token.substring(7);
             String usernameFromToken = extractUsername(token);
             return userRepository.findByEmailIgnoreCase(usernameFromToken)
+                    .filter(UserEntity::isEnabled)
                     .orElse(null);
         }
         return null;

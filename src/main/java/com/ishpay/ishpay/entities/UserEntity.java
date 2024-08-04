@@ -2,6 +2,7 @@ package com.ishpay.ishpay.entities;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +30,7 @@ import lombok.Setter;
 public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String Id;
+    private String id; // Changed to Long for standard ID type
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -40,31 +41,27 @@ public class UserEntity implements UserDetails {
     @Column(unique = true)
     private String phoneNumber;
 
-    private boolean isEmailVerified = false;
+    private Boolean isEmailVerified = false;
 
-    private boolean isPhoneNumberVerified = false;
+    private Boolean isPhoneNumberVerified = false;
 
-    private UserStatus status = UserStatus.ACTIVE;
-
-    public enum UserStatus {
-        ACTIVE, BLOCKED;
-    }
+    private Boolean isActive = true;
 
     @OneToOne(mappedBy = "user")
     private KycDocumentEntity kycDocuments;
 
     @OneToMany(mappedBy = "user")
-    private Set<BeneficiaryEntity> beneficiaries;
+    private Set<BeneficiaryEntity> beneficiaries = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        return null;
+        // Example implementation: if roles were stored, convert them to
+        // GrantedAuthority objects
+        return new HashSet<>(); // Placeholder, replace with actual authorities if applicable
     }
 
     @Override
     public String getUsername() {
-
         return email;
     }
 
@@ -75,20 +72,16 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-
         return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-
-        return true;
+        return isActive;
     }
-
 }

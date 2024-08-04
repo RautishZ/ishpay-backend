@@ -20,7 +20,7 @@ public class UserController {
     private UserServices userServices;
 
     @PostMapping("/register")
-    public ResponseEntity<LoginPojo> register(@RequestBody LoginPojo loginPojo) {
+    public ResponseEntity<?> register(@RequestBody LoginPojo loginPojo) {
         return userServices.register(loginPojo);
     }
 

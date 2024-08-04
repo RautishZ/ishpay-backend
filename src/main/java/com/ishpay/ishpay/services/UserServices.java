@@ -1,12 +1,14 @@
 package com.ishpay.ishpay.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import com.ishpay.ishpay.entities.UserEntity;
 import com.ishpay.ishpay.pojo.LoginPojo;
 import com.ishpay.ishpay.repositories.UserRepository;
@@ -26,48 +28,65 @@ public class UserServices implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public ResponseEntity<LoginPojo> register(LoginPojo user) {
+    public ResponseEntity<?> register(LoginPojo user) {
+        // Check if user already exists
+        if (userRepository.findByEmailIgnoreCase(user.getEmail().trim().toLowerCase()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("User already exists");
+        }
+
+        // Create and save the new user
         UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(user.getEmail());
+        userEntity.setEmail(user.getEmail().trim().toLowerCase());
         userEntity.setPassword(user.getPassword());
         userRepository.save(userEntity);
+
+        // Generate token
         String token = jwtServices.generateToken(userEntity);
         user.setToken(token);
-        return ResponseEntity.ok().body(user);
 
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("token", token);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
     public ResponseEntity<?> login(LoginPojo loginPojo, HttpServletRequest request) {
 
         UserEntity user = jwtServices.getUser(request);
+
         if (user != null) {
             loginPojo.setPassword(null);
-
             loginPojo.setEmail(user.getEmail());
-            loginPojo.setEmailVerified(user.isEmailVerified());
+            loginPojo.setEmailVerified(user.getIsEmailVerified());
             loginPojo.setBeneficiaries(user.getBeneficiaries());
             loginPojo.setKycDocuments(user.getKycDocuments());
             return ResponseEntity.status(HttpStatus.OK)
                     .body(loginPojo);
         }
 
-        user = userRepository.findByEmailIgnoreCase(loginPojo.getEmail())
-                .orElse(null);
+        // Check if the email exists and is active
+        UserEntity userEntity = userRepository.findByEmailIgnoreCase(loginPojo.getEmail()).orElse(null);
 
-        if (user == null) {
+        if (userEntity == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("User not found");
         }
 
-        if (loginPojo.getPassword().equals(user.getPassword())) {
+        if (!userEntity.getIsActive()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Account blocked");
+        }
 
+        // Verify password using PasswordEncoder
+        if (loginPojo.getPassword().equals(userEntity.getPassword())) {
             loginPojo.setPassword(null);
-            loginPojo.setEmail(user.getEmail());
-            loginPojo.setEmailVerified(user.isEmailVerified());
-            loginPojo.setBeneficiaries(user.getBeneficiaries());
-            loginPojo.setKycDocuments(user.getKycDocuments());
+            loginPojo.setEmail(userEntity.getEmail());
+            loginPojo.setEmailVerified(userEntity.getIsEmailVerified());
+            loginPojo.setBeneficiaries(userEntity.getBeneficiaries());
+            loginPojo.setKycDocuments(userEntity.getKycDocuments());
 
-            String token = jwtServices.generateToken(user);
+            String token = jwtServices.generateToken(userEntity);
             loginPojo.setToken(token);
             return ResponseEntity.ok().body(loginPojo);
         }
@@ -75,5 +94,4 @@ public class UserServices implements UserDetailsService {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Wrong password");
     }
-
 }
