@@ -9,14 +9,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     @Bean
-    WebMvcConfigurer corsConfigurer() {
+    public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://ishpay.com")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
+                        .allowedOrigins("https://ishpay.com") // Remove trailing slash
+                        .allowedMethods("GET", "POST", "PUT", "DELETE") // Restrict methods
+                        .allowedHeaders("Authorization", "Content-Type", "X-Requested-With") // Specify necessary headers
                         .allowCredentials(true);
             }
         };
