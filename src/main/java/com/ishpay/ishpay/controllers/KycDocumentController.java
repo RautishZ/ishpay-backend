@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ishpay.ishpay.services.KycDocumentServices;
+import com.ishpay.ishpay.services.KycDocumentService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class KycDocumentController {
 
     @Autowired
-    KycDocumentServices kycDocumentServices;
+    KycDocumentService kycDocumentServices;
 
     @PostMapping("/verify-identity")
     public ResponseEntity<String> verifyIdentity(

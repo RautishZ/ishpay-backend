@@ -17,12 +17,12 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
-public class JwtServices {
+public class JwtService {
 
     private final String SECRET_KEY = "53203caceac965c862f648b33d5a46b22c6bd1673793c09a999f1a809c53513f";
     private final UserRepository userRepository; // Add user repository dependency
 
-    public JwtServices(UserRepository userRepository) {
+    public JwtService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

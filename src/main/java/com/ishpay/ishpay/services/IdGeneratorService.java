@@ -7,7 +7,7 @@ import com.ishpay.ishpay.entities.IdCouterEntity;
 import com.ishpay.ishpay.repositories.IdCounterRepository;
 
 @Service
-public class IdGeneratorServices {
+public class IdGeneratorService {
 
     @Autowired
     private IdCounterRepository idCounterRepository;

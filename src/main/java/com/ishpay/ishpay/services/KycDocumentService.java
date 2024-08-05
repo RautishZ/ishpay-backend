@@ -16,16 +16,16 @@ import com.ishpay.ishpay.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
-public class KycDocumentServices {
+public class KycDocumentService {
 
     @Autowired
     private KycDocumentRepository kycDocumentRepository;
     @Autowired
     private FileStorageService fileStorageService;
     @Autowired
-    private IdGeneratorServices idGeneratorServices;
+    private IdGeneratorService idGeneratorServices;
     @Autowired
-    private JwtServices jwtServices;
+    private JwtService jwtServices;
     @Autowired
     private UserRepository userRepository;
 

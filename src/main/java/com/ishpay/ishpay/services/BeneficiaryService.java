@@ -10,13 +10,13 @@ import com.ishpay.ishpay.repositories.BeneficiaryRepository;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
-public class BeneficiaryServices {
+public class BeneficiaryService {
 
     @Autowired
     private BeneficiaryRepository beneficiaryRepository;
 
     @Autowired
-    private JwtServices jwtServices;
+    private JwtService jwtServices;
 
     public String addBeneficiary(BeneficiaryEntity beneficiaryEntity, HttpServletRequest request) {
         UserEntity user = jwtServices.getUser(request);

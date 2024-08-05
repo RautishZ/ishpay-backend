@@ -7,6 +7,7 @@ import java.util.HashSet;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +31,7 @@ import lombok.Setter;
 public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id; // Changed to Long for standard ID type
+    private String id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -53,11 +54,12 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Set<BeneficiaryEntity> beneficiaries = new HashSet<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private VerificationTokenEntity verificationToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Example implementation: if roles were stored, convert them to
-        // GrantedAuthority objects
-        return new HashSet<>(); // Placeholder, replace with actual authorities if applicable
+        return new HashSet<>();
     }
 
     @Override

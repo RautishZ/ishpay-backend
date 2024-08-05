@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ishpay.ishpay.entities.BeneficiaryEntity;
-import com.ishpay.ishpay.services.BeneficiaryServices;
+import com.ishpay.ishpay.services.BeneficiaryService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class BeneficianryController {
 
     @Autowired
-    private BeneficiaryServices beneficiaryServices;
+    private BeneficiaryService beneficiaryServices;
 
     @PostMapping("/beneficiary")
     public String addBeneficiary(@RequestBody BeneficiaryEntity beneficiaryEntity, HttpServletRequest request) {

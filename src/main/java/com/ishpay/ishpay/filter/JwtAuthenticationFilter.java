@@ -10,8 +10,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ishpay.ishpay.entities.UserEntity;
-import com.ishpay.ishpay.services.JwtServices;
-import com.ishpay.ishpay.services.UserServices;
+import com.ishpay.ishpay.services.JwtService;
+import com.ishpay.ishpay.services.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,10 +21,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtServices jwtServices;
-    private final UserServices userServices;
+    private final JwtService jwtServices;
+    private final UserService userServices;
 
-    public JwtAuthenticationFilter(JwtServices jwtServices, UserServices userServices) {
+    public JwtAuthenticationFilter(JwtService jwtServices, UserService userServices) {
         this.jwtServices = jwtServices;
         this.userServices = userServices;
     }

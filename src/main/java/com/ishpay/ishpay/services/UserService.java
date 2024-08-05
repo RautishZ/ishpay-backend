@@ -15,12 +15,14 @@ import com.ishpay.ishpay.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
-public class UserServices implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    JwtServices jwtServices;
+    private JwtService jwtServices;
+    @Autowired
+    private EmailService emailServices;
 
     @Override
     public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,6 +50,7 @@ public class UserServices implements UserDetailsService {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("token", token);
 
+        emailServices.sendVerificationEmail(userEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
@@ -94,4 +97,16 @@ public class UserServices implements UserDetailsService {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Wrong password");
     }
+
+    public ResponseEntity<?> resendEmail(HttpServletRequest request) {
+        UserEntity user = jwtServices.getUser(request);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Unauthorized");
+        }
+
+        return emailServices.sendVerificationEmail(user);
+    }
+
 }

@@ -14,16 +14,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ishpay.ishpay.filter.JwtAuthenticationFilter;
-import com.ishpay.ishpay.services.UserServices;
+import com.ishpay.ishpay.services.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserServices userServices;
+    private final UserService userServices;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(UserServices userServices, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(UserService userServices, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userServices = userServices;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
@@ -32,7 +32,8 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        requests -> requests.requestMatchers("/login/**", "/logout/**", "/register/**").permitAll()
+                        requests -> requests.requestMatchers("/login/**", "/verify/**", "/logout/**", "/register/**")
+                                .permitAll()
                                 .anyRequest().authenticated())
                 .userDetailsService(userServices)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
